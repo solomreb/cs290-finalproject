@@ -1,0 +1,178 @@
+
+<!doctype html>
+<head>
+<!-- Some code borrowed from http://help.dottoro.com/ljppxrti.php -->
+    <script type="text/javascript" src="ajax_form.js"></script>
+    <title>Dog Walking Database</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<div class="container-fluid">
+<h2> Dog Walking Database </h2>
+</div>
+    <style>
+        .error {
+            display: none;
+            color: #a00000;
+            font-weight: bold;
+        }
+        #progress {
+            visibility: hidden;
+            color: #00a000;
+        }
+    </style>
+    <script type="text/javascript" src="ajax_form.js"></script>
+    <style>
+        .error {
+            display: none;
+            color: #a00000;
+            font-weight: bold;
+        }
+        #progress {
+            visibility: hidden;
+            color: #00a000;
+        }
+    </style>
+    <script type="text/javascript">     
+        function HideAllErrorFields () {
+            for (var i = 1; i <= 4; i++) {
+                var field = document.getElementById ("error" + i);
+                field.style.display = "none";
+            }
+        }
+
+        function ShowErrorFields (idsStr) {
+            var ids = idsStr.split (",");
+            for (var i = 0; i < ids.length; i++) {
+                var field = document.getElementById ("error" + ids[i]);
+                if (field) {
+                    field.style.display = "block";
+                }
+            }
+        }
+
+        var registering = false;
+        
+        function OnReadyStateChanged (httpRequest, form) {
+            if (httpRequest.readyState == 0 || httpRequest.readyState == 4) {
+                
+                registering = false;
+                StopAnim ();
+                
+                    // prevent memory leaks
+                httpRequest.onreadystatechange = null;
+                
+                if (IsRequestSuccessful (httpRequest)) {    // defined in ajax_form.js
+                    if (httpRequest.responseText === "ok") {    // registration is successful
+                        alert ("Thank you for registering");
+                        AjaxSend (form, 'createAccount.php', 'post')
+                        location.href = "http://web.engr.oregonstate.edu/~solomreb/cs340/finalProject/src/index.php";
+                        
+                    }
+                    else {  // some fields are invalid
+                        ShowErrorFields (httpRequest.responseText);
+                    }
+                }
+                else {
+                    alert ("An error occurred while registering. Please try it again.");
+                }
+            }
+        }
+
+        function AjaxSend (form, url, method) {
+                // avoid resend data while registering
+            if (registering) {
+                return;
+            }
+                // hide all error fields
+            HideAllErrorFields ();
+            
+                // get message data
+            var data = GetMessageBody (form);   // defined in ajax_form.js
+
+                // send the request
+            var httpRequest = CreateRequestObj ();  // defined in ajax_form.js
+                // try..catch is required if working offline
+            try {
+                httpRequest.open (method, url, true);   // asynchron
+                httpRequest.onreadystatechange = function () {OnReadyStateChanged (httpRequest, form)};
+                httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                httpRequest.send (data);
+            }
+            catch (e) {
+                alert ("Cannot connect to the server!");
+                return;
+            }
+
+            registering = true;
+            StartAnim ();
+        }
+
+            // blinking text
+        var animTimerId = 0;
+        function StartAnim () {
+            var progress = document.getElementById ("progress");
+            progress.style.visibility = "visible";
+            animTimerId = setInterval (RegAnim, 100);
+        }
+        function RegAnim () {
+            var progress = document.getElementById ("progress");
+            progress.style.visibility = (progress.style.visibility == "visible") ? "hidden" : "visible";
+        }
+        function StopAnim () {
+            var progress = document.getElementById ("progress");
+            progress.style.visibility = "hidden";
+            clearInterval (animTimerId);
+        }
+
+    </script>
+</head>
+<body>
+<div class="container-fluid">
+<a href="signin.html">I already have an account</a><br>
+    <legend>Register Username</legend>
+    The username must be between 2 and 20 characters, the password must be between 6 and 20 characters.
+
+    <form id="registerForm" onsubmit="AjaxSend (this, 'verify.php', 'post'); return false;">
+    <div class="form-group">
+    	First Name: <input type="text" name="fname" />
+        <div class="error" id="error1">Missing first name.</div>
+    </div>
+    <div class="form-group">
+        Last Name: <input type="text" name="lname" />
+        <div class="error" id="error2">Missing last name.</div>
+    </div>
+    <div class="form-group">
+        Phone Number: <input type="text" name="phone" />
+        <div class="error" id="error3">Missing or invalid phone number.</div>
+    </div>
+    <div class="form-group">
+        Email: <input type="text" name="email" />
+        <div class="error" id="error4">Missing or invalid email address.</div>
+    </div>
+    <div class="form-group">
+        User Name: <input type="text" name="userName" />
+        <div class="error" id="error5">Must be between 2 and 20 characters.</div>
+        <div class="error" id="error6">A user already exists with that username.</div>
+    </div>
+    <div class="form-group">
+        Password: <input type="password" name="password" />
+        <div class="error" id="error7">Must be between 6 and 20 characters.</div>
+    </div>
+    <div class="form-group">        Repeat Password: <input type="password" name="repassword" />
+        <div class="error" id="error8">Must be the same as the password.</div>
+    </div>
+    <div class="form-group">        <input type="submit" value="Register" />
+        <div id="progress">Registering</div><br><br>
+        
+    </form>
+</div>
+    
+    <br><br>
+
+    
+    
+    
+</body>
+</html>

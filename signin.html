@@ -1,0 +1,160 @@
+
+<!doctype html>
+<head>
+<!-- Some code borrowed from http://help.dottoro.com/ljppxrti.php -->
+    <script type="text/javascript" src="ajax_form.js"></script>
+    <title>Dog Walking Database</title>
+  	<meta charset="utf-8">
+  	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<div class="container-fluid">
+		<h2> Dog Walking Database </h2>
+	</div>
+    <style>
+        .error {
+            display: none;
+            color: #a00000;
+            font-weight: bold;
+        }
+        #progress {
+            visibility: hidden;
+            color: #00a000;
+        }
+    </style>
+    <script type="text/javascript" src="ajax_form.js"></script>
+    <style>
+        .error {
+            display: none;
+            color: #a00000;
+            font-weight: bold;
+        }
+        #progress {
+            visibility: hidden;
+            color: #00a000;
+        }
+    </style>
+    <script type="text/javascript">     
+        function HideAllErrorFields () {
+            for (var i = 1; i <= 4; i++) {
+                var field = document.getElementById ("error" + i);
+                field.style.display = "none";
+            }
+        }
+
+        function ShowErrorFields (idsStr) {
+            var ids = idsStr.split (",");
+            for (var i = 0; i < ids.length; i++) {
+                var field = document.getElementById ("error" + ids[i]);
+                if (field) {
+                    field.style.display = "block";
+                }
+            }
+        }
+
+        var registering = false;
+        
+        function OnReadyStateChanged (httpRequest, form) {
+            if (httpRequest.readyState == 0 || httpRequest.readyState == 4) {
+                
+                registering = false;
+                StopAnim ();
+                
+                    // prevent memory leaks
+                httpRequest.onreadystatechange = null;
+                
+                if (IsRequestSuccessful (httpRequest)) {    // defined in ajax_form.js
+                    if (httpRequest.responseText === "ok") {    // registration is successful
+                    	AjaxSend (form, 'checkPassword.php', 'post');
+                        alert ("Thank you for signing in");
+                        location.href = "http://web.engr.oregonstate.edu/~solomreb/cs340/finalProject/src/index.php";
+                        
+                    }
+                    else {  // some fields are invalid
+                        ShowErrorFields (httpRequest.responseText);
+                    }
+                }
+                else {
+                    alert ("An error occurred while registering. Please try it again.");
+                }
+            }
+        }
+
+        function AjaxSend (form, url, method) {
+                // avoid resend data while registering
+            if (registering) {
+                return;
+            }
+                // hide all error fields
+            HideAllErrorFields ();
+            
+                // get message data
+            var data = GetMessageBody (form);   // defined in ajax_form.js
+
+                // send the request
+            var httpRequest = CreateRequestObj ();  // defined in ajax_form.js
+                // try..catch is required if working offline
+            try {
+                httpRequest.open (method, url, true);   // asynchron
+                httpRequest.onreadystatechange = function () {OnReadyStateChanged (httpRequest, form)};
+                httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                httpRequest.send (data);
+            }
+            catch (e) {
+                alert ("Cannot connect to the server!");
+                return;
+            }
+
+            registering = true;
+            StartAnim ();
+        }
+
+            // blinking text
+        var animTimerId = 0;
+        function StartAnim () {
+            var progress = document.getElementById ("progress");
+            progress.style.visibility = "visible";
+            animTimerId = setInterval (RegAnim, 100);
+        }
+        function RegAnim () {
+            var progress = document.getElementById ("progress");
+            progress.style.visibility = (progress.style.visibility == "visible") ? "hidden" : "visible";
+        }
+        function StopAnim () {
+            var progress = document.getElementById ("progress");
+            progress.style.visibility = "hidden";
+            clearInterval (animTimerId);
+        }
+
+    </script>
+</head>
+<body>
+<div class="container-fluid">
+	<a href="register.html">I don't have an account</a><br>
+    <legend>Sign In</legend><br>
+
+    <form id="signInForm" onsubmit="AjaxSend (this, 'checkPassword.php', 'post'); return false;">
+    	<div class="form-group">
+        	User Name: <input type="text" name="userName" />
+        	<div class="error" id="error1">No such username.</div>
+    		<div class="error" id="error2">Missing username.</div>
+        </div>
+    	<div class="form-group">
+        	Password: <input type="password" name="password" />
+        	<div class="error" id="error3">Wrong password.</div>
+        	<div class="error" id="error4">Must be between 6 and 20 characters.</div>
+        </div>
+        	<input type="submit" value="Sign In" />
+        	<div id="progress">Signing in</div><br><br>
+</div>
+        
+    </form>
+    </fieldset>
+    
+    <br><br>
+
+    
+    
+    
+</body>
+</html>
