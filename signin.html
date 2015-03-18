@@ -65,9 +65,8 @@
                 
                 if (IsRequestSuccessful (httpRequest)) {    // defined in ajax_form.js
                     if (httpRequest.responseText === "ok") {    // registration is successful
-                    	AjaxSend (form, 'checkPassword.php', 'post');
                         alert ("Thank you for signing in");
-                        location.href = "http://web.engr.oregonstate.edu/~solomreb/cs340/finalProject/src/index.php";
+                        location.href = "http://web.engr.oregonstate.edu/~solomreb/cs290/finalProject/src/index.php";
                         
                     }
                     else {  // some fields are invalid
@@ -133,7 +132,7 @@
 	<a href="register.html">I don't have an account</a><br>
     <legend>Sign In</legend><br>
 
-    <form id="signInForm" onsubmit="AjaxSend (this, 'checkPassword.php', 'post'); return false;">
+    <form id="signInForm" onsubmit="AjaxSend (this, 'http://web.engr.oregonstate.edu/~solomreb/cs290/finalProject/src/checkPassword.php', 'post'); return false;">
     	<div class="form-group">
         	User Name: <input type="text" name="userName" />
         	<div class="error" id="error1">No such username.</div>

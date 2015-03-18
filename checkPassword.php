@@ -2,10 +2,6 @@
 //checkPassword.php
 session_start();
 
-if (!(isset($_SESSION['username']) && $_SESSION['username'] != '')) {
-header ("Location: signin.html");
-}
-
 include 'storedInfo.php';
 
 $mysqli = new mysqli("oniddb.cws.oregonstate.edu", "solomreb-db", $myPassword,"solomreb-db");

@@ -2,10 +2,6 @@
 //matchDogsWalkers.php
 session_start();
 
-if (!(isset($_SESSION['username']) && $_SESSION['username'] != '')) {
-header ("Location: signin.html");
-}
-
 include 'storedInfo.php';
 header('Location: index.php');
 
@@ -46,6 +42,7 @@ while ($timeSlots = mysqli_fetch_array($stmt)){
 		echo "$insertQuery<br>";
 		$insertResult = mysqli_query($mysqli, $insertQuery);
 	}
+	
 }
 
 ?>
