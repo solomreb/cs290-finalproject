@@ -1,27 +1,6 @@
-
 <!doctype html>
 <head>
 <!-- Some code borrowed from http://help.dottoro.com/ljppxrti.php -->
-    <script type="text/javascript" src="ajax_form.js"></script>
-    <title>Dog Walking Database</title>
-  	<meta charset="utf-8">
-  	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	<div class="container-fluid">
-		<h2> Dog Walking Database </h2>
-	</div>
-    <style>
-        .error {
-            display: none;
-            color: #a00000;
-            font-weight: bold;
-        }
-        #progress {
-            visibility: hidden;
-            color: #00a000;
-        }
-    </style>
     <script type="text/javascript" src="ajax_form.js"></script>
     <style>
         .error {
@@ -65,8 +44,12 @@
                 
                 if (IsRequestSuccessful (httpRequest)) {    // defined in ajax_form.js
                     if (httpRequest.responseText === "ok") {    // registration is successful
-                        alert ("Thank you for signing in");
-                        location.href = "http://web.engr.oregonstate.edu/~solomreb/cs290/finalProject/src/index.php";    
+                    	
+                        alert ("Thank you for registering");
+                        //send username, password to createAccount.php
+                        AjaxSend(document.getElementById("registerForm"), 'createAccount.php', 'post');
+                        //location.href = "http://web.engr.oregonstate.edu/~solomreb/cs340/finalProject/src/";
+
                     }
                     else {  // some fields are invalid
                         ShowErrorFields (httpRequest.responseText);
@@ -127,30 +110,40 @@
     </script>
 </head>
 <body>
-<div class="container-fluid">
-	<a href="register.html">I don't have an account</a><br>
-    <legend>Sign In</legend><br>
+    <fieldset>
+    <legend>Register Username</legend><br>
+    The username must be between 2 and 20 characters, the password must be between 6 and 20 characters.
 
-    <form id="signInForm" onsubmit="AjaxSend (this, 'http://web.engr.oregonstate.edu/~solomreb/cs290/finalProject/src/checkPassword.php', 'post'); return false;">
-    	<div class="form-group">
-        	User Name: <input type="text" name="userName" />
-        	<div class="error" id="error1">No such username.</div>
-    		<div class="error" id="error2">Missing username.</div>
-        </div>
-    	<div class="form-group">
-        	Password: <input type="password" name="password" />
-        	<div class="error" id="error3">Wrong password.</div>
-        	<div class="error" id="error4">Must be between 6 and 20 characters.</div>
-        </div>
-        	<input type="submit" value="Sign In" />
-        	<div id="progress">Signing in</div><br><br>
-</div>
-        
+    <form id="registerForm" onsubmit="AjaxSend (this, 'verify.php', 'post'); return false;">
+        User Name: <input type="text" name="userName" />
+        <div class="error" id="error1">Must be between 2 and 20 characters.</div>
+        <div class="error" id="error2">A user already exists with that username.</div>
+        <br /><br />
+        Password: <input type="password" name="password" />
+        <div class="error" id="error3">Must be between 6 and 20 characters.</div>
+        <br /><br />
+        Repeat Password: <input type="password" name="repassword" />
+        <div class="error" id="error4">Must be the same as the password.</div>
+        <br /><br />
+        <input type="submit" value="Register" />
+        <div id="progress">Registering</div>
     </form>
     </fieldset>
     
     <br><br>
-
+    
+    <fieldset>
+    <legend>Sign In</legend><br>
+    <form onsubmit="AjaxSend (this, 'startSession.php', 'post'); return false;">
+        User Name: <input type="text" name="userName" />
+        <div class="error" id="error1">Invalid username/password combination.</div>
+        <br /><br />
+        Password: <input type="password" name="password" />
+        <br /><br />
+        <input type="submit" value="Register" />
+        <div id="progress">Signing in</div>
+    </form>
+    </fieldset>
     
     
     

@@ -110,6 +110,7 @@
                 httpRequest.onreadystatechange = null;
                 
                 if (IsRequestSuccessful (httpRequest)) {    // defined in ajax_form.js
+                console.log(httpRequest);
                     if (httpRequest.responseText === "ok") {    // registration is successful
                     		alert("Thank you for registering. Please sign in.");
 							window.location.href = 'http://web.engr.oregonstate.edu/~solomreb/cs290/finalProject/src/index.php';
@@ -120,10 +121,11 @@
                 		ShowErrorFields (httpRequest.responseText);
                 	}
                 }
+                else {
+					alert ("An error occurred while registering. Please try it again.");
+				}
             }
-			else {
-				alert ("An error occurred while registering. Please try it again.");
-			}
+			
         }
 
         function AjaxSend (form, url, method) {

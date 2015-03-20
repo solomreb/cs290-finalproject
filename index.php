@@ -78,13 +78,13 @@ echo <<<END
 		<thead>
 			<tr style="height: 30px">
 				<th style="width: 10%;"></th>
-				<th style="width: 10%;">Sunday</th>
 				<th style="width: 10%;">Monday</th>
 				<th style="width: 10%;">Tuesday</th>
 				<th style="width: 10%;">Wednesday</th>
 				<th style="width: 10%;">Thursday</th>
 				<th style="width: 10%;">Friday</th>
 				<th style="width: 10%;">Saturday</th>
+				<th style="width: 10%;">Sunday</th>
 			</tr>
 		</thead>
 		<tbody> 
@@ -149,14 +149,14 @@ END;
 </form>
 <?php
 
-$query = "SELECT DISTINCT d.dog_id, t.day_of_week, t.time_of_day, d.name, c.fname, c.lname, c.address, c.phone FROM clients c INNER JOIN " . 
-	"dogs d ON c.client_id = d.owner_id INNER JOIN " .
-	"dogs_time dt ON d.dog_id = dt.dog_id INNER JOIN " .
-	"time_slots t ON dt.time_id = t.time_id INNER JOIN " .
-	"walkers_time wt ON t.time_id = wt.time_id INNER JOIN " .
-	"walkers w ON w.walker_id = w.walker_id INNER JOIN " .
-	"dogs_walkers dw ON w.walker_id = dw.walker_id " .
-	"WHERE w.walker_id = '$walker_id'";
+$query = "SELECT DISTINCT t.time_id, t.day_of_week, t.time_of_day, d.dog_id, d.name, c.fname, c.lname
+FROM clients c, time_slots t, dogs d, walkers w, dogs_walkers dw
+WHERE c.client_id = d.owner_id
+AND d.dog_id = dw.dog_id
+AND w.walker_id = dw.walker_id
+AND dw.time_id = t.time_id 
+AND w.walker_id =  '$walker_id'
+ORDER BY t.time_id";
 
 	if (!($stmt = mysqli_query($mysqli, $query))) {
 		echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
@@ -168,8 +168,6 @@ echo " <table class='table table-hover'>
 				<th style='width: 20%;'>Time</th>
 				<th style='width: 10%;'>Dog</th>
 				<th style='width: 10%;'>Client</th>
-				<th style='width: 10%;'>Address</th>
-				<th style='width: 10%;'>Phone</th>
 				<th style='width: 10%;'>
 			</tr>
 		</thead>
@@ -182,8 +180,6 @@ while ($row = mysqli_fetch_array($stmt)) {
 		echo "<td>" . $row['day_of_week'] . " " . $row['time_of_day'] . "</td>";
 		echo "<td>" . $row['name'] . "</td>";
 		echo "<td>" . $row['fname'] . " " . $row['lname'] ."</td>";
-		echo "<td>" . $row['address'] . "</td>";
-		echo "<td>" . $row['phone'] . "</td>";
 		
 		echo "<td><form method=\"GET\" action=\"viewDog.php\">";
 		echo "<input type=\"hidden\" name=\"dogid\" value=\"".$row['dog_id']."\">";

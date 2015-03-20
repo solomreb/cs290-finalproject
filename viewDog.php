@@ -55,7 +55,7 @@ echo " <table class='table table-hover'>
 				<th style='width: 10%;'>Client</th>
 				<th style='width: 10%;'>Address</th>
 				<th style='width: 10%;'>Phone</th>
-				<th style='width: 10%;'>Notes</th>
+				<th style='width: 20%;'>Notes</th>
 			</tr>
 		</thead>";
 

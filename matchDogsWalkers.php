@@ -23,13 +23,13 @@ if (!($stmt = mysqli_query($mysqli, $query))) {
 
 //select all time slots for walker
 $timeQuery= "SELECT time_id FROM walkers_time WHERE walker_id = '$walker_id'";
-echo "selecting times for walker $walker_id<br>";
 if (!($stmt = mysqli_query($mysqli, $timeQuery))) {
 		echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
 }
 //for each timeslot, find all dogs who need that timeslot and are not already being walked
 while ($timeSlots = mysqli_fetch_array($stmt)){
 	$time_id = $timeSlots['time_id'];
+	echo "time id = " . $time_id . "<br>";
 	$findDogsQuery = "SELECT dogs_time.dog_id FROM dogs_time " .  
 	"WHERE time_id = '$time_id' AND NOT EXISTS (SELECT * FROM dogs_walkers " . 
 	"WHERE dogs_walkers.walker_id = '$walker_id' AND dogs_walkers.dog_id = dogs_time.dog_id) ";
@@ -37,6 +37,7 @@ while ($timeSlots = mysqli_fetch_array($stmt)){
 	$result = mysqli_query($mysqli, $findDogsQuery);
 	while ($resultRow = mysqli_fetch_array($result)){
 		$dog_id = $resultRow['dog_id'];
+		echo "dog id = " . $dog_id . "<br>";
 		$insertQuery = "INSERT INTO dogs_walkers(walker_id, dog_id, time_id) VALUES " . 
 		"('$walker_id', '$dog_id', '$time_id')";
 		echo "$insertQuery<br>";
